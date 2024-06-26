@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Data</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <h1>Stock Data</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>股票代码</th>
+                <th>股票名称</th>
+                <th>当前价</th>
+                <th>涨跌百分比</th>
+                <th>涨跌额</th>
+                <th>成本价</th>
+                <th>持仓数量</th>
+                <th>当前市值</th>
+                <th>盈亏</th>
+            </tr>
+        </thead>
+        <tbody id="stockTableBody">
+        </tbody>
+    </table>
+    <script>
+        const stocks = ['SZ000981', 'SH600078', 'SH600096'];
+        fetch('/api/stocks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ stocks: stocks })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.getElementById('stockTableBody');
+            data.forEach(stock => {
+                const row = document.createElement('tr');
+
+                Object.keys(stock).forEach(key => {
+                    const cell = document.createElement('td');
+                    if (key === '成本价' || key === '持仓数量') {
+                        const input = document.createElement('input');
+                        input.type = 'number';
+                        input.value = stock[key];
+                        input.addEventListener('input', (e) => {
+                            stock[key] = parseFloat(e.target.value);
+                            updateStockValues(stock);
+                        });
+                        cell.appendChild(input);
+                    } else {
+                        cell.innerText = stock[key];
+                    }
+                    row.appendChild(cell);
+                });
+
+                tableBody.appendChild(row);
+            });
+        });
+
+        function updateStockValues(stock) {
+            stock.当前市值 = stock.当前价 * stock.持仓数量;
+            stock.盈亏 = (stock.当前价 - stock.成本价) * stock.持仓数量;
+            const tableBody = document.getElementById('stockTableBody');
+            tableBody.innerHTML = '';
+            stocks.forEach(stock => {
+                const row = document.createElement('tr');
+
+                Object.keys(stock).forEach(key => {
+                    const cell = document.createElement('td');
+                    if (key === '成本价' || key === '持仓数量') {
+                        const input = document.createElement('input');
+                        input.type = 'number';
+                        input.value = stock[key];
+                        input.addEventListener('input', (e) => {
+                            stock[key] = parseFloat(e.target.value);
+                            updateStockValues(stock);
+                        });
+                        cell.appendChild(input);
+                    } else {
+                        cell.innerText = stock[key];
+                    }
+                    row.appendChild(cell);
+                });
+
+                tableBody.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>
