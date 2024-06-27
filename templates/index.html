@@ -2,28 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stock Data</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        input {
-            width: 100%;
-            box-sizing: border-box;
-        }
-    </style>
+    <title>股票数据</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <h1>Stock Data</h1>
+    <h1>股票数据</h1>
     <table>
         <thead>
             <tr>
@@ -38,73 +21,21 @@
                 <th>盈亏</th>
             </tr>
         </thead>
-        <tbody id="stockTableBody">
+        <tbody>
+            {% for stock in data %}
+            <tr>
+                <td>{{ stock['股票代码'] }}</td>
+                <td>{{ stock['股票名称'] }}</td>
+                <td>{{ stock['当前价'] }}</td>
+                <td>{{ stock['涨跌百分比'] }}</td>
+                <td>{{ stock['涨跌额'] }}</td>
+                <td><input type="number" value="{{ stock['成本价'] }}"></td>
+                <td><input type="number" value="{{ stock['持仓数量'] }}"></td>
+                <td>{{ stock['当前市值'] }}</td>
+                <td>{{ stock['盈亏'] }}</td>
+            </tr>
+            {% endfor %}
         </tbody>
     </table>
-    <script>
-        const stocks = ['SZ000981', 'SH600078', 'SH600096'];
-        fetch('/api/stocks', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ stocks: stocks })
-        })
-        .then(response => response.json())
-        .then(data => {
-            const tableBody = document.getElementById('stockTableBody');
-            data.forEach(stock => {
-                const row = document.createElement('tr');
-
-                Object.keys(stock).forEach(key => {
-                    const cell = document.createElement('td');
-                    if (key === '成本价' || key === '持仓数量') {
-                        const input = document.createElement('input');
-                        input.type = 'number';
-                        input.value = stock[key];
-                        input.addEventListener('input', (e) => {
-                            stock[key] = parseFloat(e.target.value);
-                            updateStockValues(stock);
-                        });
-                        cell.appendChild(input);
-                    } else {
-                        cell.innerText = stock[key];
-                    }
-                    row.appendChild(cell);
-                });
-
-                tableBody.appendChild(row);
-            });
-        });
-
-        function updateStockValues(stock) {
-            stock.当前市值 = stock.当前价 * stock.持仓数量;
-            stock.盈亏 = (stock.当前价 - stock.成本价) * stock.持仓数量;
-            const tableBody = document.getElementById('stockTableBody');
-            tableBody.innerHTML = '';
-            stocks.forEach(stock => {
-                const row = document.createElement('tr');
-
-                Object.keys(stock).forEach(key => {
-                    const cell = document.createElement('td');
-                    if (key === '成本价' || key === '持仓数量') {
-                        const input = document.createElement('input');
-                        input.type = 'number';
-                        input.value = stock[key];
-                        input.addEventListener('input', (e) => {
-                            stock[key] = parseFloat(e.target.value);
-                            updateStockValues(stock);
-                        });
-                        cell.appendChild(input);
-                    } else {
-                        cell.innerText = stock[key];
-                    }
-                    row.appendChild(cell);
-                });
-
-                tableBody.appendChild(row);
-            });
-        }
-    </script>
 </body>
 </html>
