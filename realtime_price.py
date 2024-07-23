@@ -1,7 +1,6 @@
 import json
 import requests
 import pandas as pd
-import akshare as ak
 
 # 读取保存的csv文件,并转为字典
 df = pd.read_csv('stock.csv', dtype={'id': str, 'name': str})
@@ -76,9 +75,6 @@ def xueqiu_api(lis):
     
     # 返回响应文本
     return r_dat
-
-result = ak.stock_individual_spot_xq('SZ000981')
-print(result)
 
 stock = ['SZ000981', 'SH600078', 'SH600096']
 stock_data = xueqiu_api(stock)

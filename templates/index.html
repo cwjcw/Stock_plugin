@@ -3,39 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <title>股票数据</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <h1>股票数据</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>股票代码</th>
-                <th>股票名称</th>
-                <th>当前价</th>
-                <th>涨跌百分比</th>
-                <th>涨跌额</th>
-                <th>成本价</th>
-                <th>持仓数量</th>
-                <th>当前市值</th>
-                <th>盈亏</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for stock in data %}
-            <tr>
-                <td>{{ stock['股票代码'] }}</td>
-                <td>{{ stock['股票名称'] }}</td>
-                <td>{{ stock['当前价'] }}</td>
-                <td>{{ stock['涨跌百分比'] }}</td>
-                <td>{{ stock['涨跌额'] }}</td>
-                <td><input type="number" value="{{ stock['成本价'] }}"></td>
-                <td><input type="number" value="{{ stock['持仓数量'] }}"></td>
-                <td>{{ stock['当前市值'] }}</td>
-                <td>{{ stock['盈亏'] }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <form method="POST">
+        <table border="1" class="data">
+            <thead>
+                <tr>
+                    {% for column in df.columns %}
+                        <th>{{ column }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in df.itertuples() %}
+                    <tr>
+                        <td>{{ row.股票代码 }}</td>
+                        <td>{{ row.股票名称 }}</td>
+                        <td>{{ row.当前价 }}</td>
+                        <td>{{ row.涨跌百分比 }}</td>
+                        <td>{{ row.涨跌额 }}</td>
+                        <td><input type="text" name="cost_price" value="{{ row.成本价 }}"></td>
+                        <td><input type="text" name="quantity" value="{{ row.持仓数量 }}"></td>
+                        <td>{{ row.当前市值 }}</td>
+                        <td>{{ row.盈亏 }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit">保存</button>
+    </form>
 </body>
 </html>
